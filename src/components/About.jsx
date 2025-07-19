@@ -135,21 +135,21 @@ const About = () => {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    
+    const canvas=canvasRef.current;
     // Set renderer size to match the parent container's actual size
     const updateCanvasSize = () => {
-      if (canvasRef.current) {
-        const width = canvasRef.current.clientWidth;
-        const height = canvasRef.current.clientHeight;
+      if (canvas) {
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
         renderer.setSize(width, height);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
       }
     };
 
-    if (canvasRef.current) {
-      canvasRef.current.innerHTML = ''; // Clear previous canvas if any
-      canvasRef.current.appendChild(renderer.domElement);
+    if (canvas) {
+      canvas.innerHTML = ''; // Clear previous canvas if any
+      canvas.appendChild(renderer.domElement);
       updateCanvasSize(); // Set initial size
     }
 
@@ -193,8 +193,8 @@ const About = () => {
 
     return () => {
       window.removeEventListener('resize', onWindowResize);
-      if (canvasRef.current && renderer.domElement) {
-        canvasRef.current.removeChild(renderer.domElement);
+      if (canvas && renderer.domElement) {
+        canvas.removeChild(renderer.domElement);
       }
       scene.remove(stars);
       starGeometry.dispose();

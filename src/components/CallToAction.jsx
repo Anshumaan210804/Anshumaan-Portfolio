@@ -7,8 +7,7 @@ const CallToAction = ({ id }) => { // Accept 'id' prop here
   const [linkedinHovered, setLinkedinHovered] = useState(false);
   const [linkedinMousePos, setLinkedinMousePos] = useState({ x: 0, y: 0 });
 
-  const [gmailHovered, setGmailHovered] = useState(false);
-  const [gmailMousePos, setGmailMousePos] = useState({ x: 0, y: 0 });
+
 
   const [instagramHovered, setInstagramHovered] = useState(false);
   const [instagramMousePos, setInstagramMousePos] = useState({ x: 0, y: 0 });
@@ -20,29 +19,30 @@ const CallToAction = ({ id }) => { // Accept 'id' prop here
 
   useEffect(() => {
     // Check if THREE is available globally. If not, inform the user.
+    
     if (typeof THREE === 'undefined') {
       console.error("THREE.js is not loaded. Please ensure the THREE.js CDN script is included in your HTML file.");
       return;
     }
-
+const canvas=canvasRef.current;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     
     // Set renderer size to match the parent container's actual size
     const updateCanvasSize = () => {
-      if (canvasRef.current) {
-        const width = canvasRef.current.clientWidth;
-        const height = canvasRef.current.clientHeight;
+      if (canvas) {
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
         renderer.setSize(width, height);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
       }
     };
 
-    if (canvasRef.current) {
-      canvasRef.current.innerHTML = ''; // Clear previous canvas if any
-      canvasRef.current.appendChild(renderer.domElement);
+    if (canvas) {
+      canvas.innerHTML = ''; // Clear previous canvas if any
+      canvas.appendChild(renderer.domElement);
       updateCanvasSize(); // Set initial size
     }
 
@@ -86,8 +86,8 @@ const CallToAction = ({ id }) => { // Accept 'id' prop here
 
     return () => {
       window.removeEventListener('resize', onWindowResize);
-      if (canvasRef.current && renderer.domElement) {
-        canvasRef.current.removeChild(renderer.domElement);
+      if (canvas && renderer.domElement) {
+        canvas.removeChild(renderer.domElement);
       }
       scene.remove(stars);
       starGeometry.dispose();

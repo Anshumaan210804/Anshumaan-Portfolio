@@ -360,7 +360,7 @@ const Skills = ({ onNavigate }) => {
       );
       return;
     }
-
+  const canvas = canvasRef.current;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -424,8 +424,8 @@ const Skills = ({ onNavigate }) => {
 
     return () => {
       window.removeEventListener("resize", onWindowResize);
-      if (canvasRef.current && renderer.domElement) {
-        canvasRef.current.removeChild(renderer.domElement);
+      if (canvas && renderer.domElement) {
+        canvas.removeChild(renderer.domElement);
       }
       scene.remove(stars);
       starGeometry.dispose();

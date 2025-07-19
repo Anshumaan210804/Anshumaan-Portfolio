@@ -27,22 +27,11 @@ const Hero = ({ onNavigate }) => { // Accept onNavigate prop
   const [letterMousePosition, setLetterMousePosition] = useState({ x: 0, y: 0 });
 
   // Function to generate a random neon color (kept from previous iterations, though not used by stars)
-  const getRandomNeonColor = () => {
-    const neonColors = [
-      0xFF00FF, // Magenta
-      0x00FFFF, // Cyan
-      0xFFFF00, // Yellow
-      0x00FF00, // Lime Green
-      0xFF69B4, // Hot Pink
-      0x00BFFF, // Deep Sky Blue
-      0xFFD700, // Gold
-      0x8A2BE2  // Blue Violet
-    ];
-    return neonColors[Math.floor(Math.random() * neonColors.length)];
-  };
+  
 
   useEffect(() => {
     // Check if THREE is available globally. If not, inform the user.
+      const canvas = canvasRef.current;
     if (typeof THREE === 'undefined') {
       console.error("THREE.js is not loaded. Please ensure the THREE.js CDN script is included in your HTML file.");
       return;
@@ -54,9 +43,9 @@ const Hero = ({ onNavigate }) => { // Accept onNavigate prop
     
     renderer.setSize(window.innerWidth, 600);
     renderer.setPixelRatio(window.devicePixelRatio);
-    if (canvasRef.current) { // Ensure canvasRef.current exists before appending
-      canvasRef.current.innerHTML = ''; // Clear previous canvas if any
-      canvasRef.current.appendChild(renderer.domElement);
+    if (canvas) { // Ensure canvasRef.current exists before appending
+      canvas.innerHTML = ''; // Clear previous canvas if any
+      canvas.appendChild(renderer.domElement);
     }
 
     // Create rotating stars (original implementation)
@@ -107,8 +96,8 @@ const Hero = ({ onNavigate }) => { // Accept onNavigate prop
     // Cleanup function
     return () => {
       window.removeEventListener('resize', onWindowResize);
-      if (canvasRef.current && renderer.domElement) {
-        canvasRef.current.removeChild(renderer.domElement);
+      if (canvas && renderer.domElement) {
+        canvas.removeChild(renderer.domElement);
       }
       // Dispose of Three.js objects
       scene.remove(stars);
@@ -132,6 +121,7 @@ const Hero = ({ onNavigate }) => { // Accept onNavigate prop
       setMousePosition({ x: normalizedX, y: normalizedY });
     }
   };
+
 
   // Function to handle mouse movement over the profile picture
   const handleProfilePicMouseMove = (e) => {
@@ -258,7 +248,7 @@ const Hero = ({ onNavigate }) => { // Accept onNavigate prop
         >
           <img
             src={profileBannerImage} 
-            alt="Profile Picture"
+            alt=""
             className="w-full h-full rounded-full object-cover" 
           />
         </div>
@@ -355,7 +345,8 @@ const Hero = ({ onNavigate }) => { // Accept onNavigate prop
 
           {/* Skills Button - Now navigates to the Skills component */}
           <a
-            href="#" // Removed href to prevent default navigation. onClick handles it.
+            href="#skills-section" // Removed href to prevent default navigation. onClick handles it.
+          
             onClick={() => onNavigate('skills')} // Call the navigateTo function from props
             onMouseEnter={() => setHoveredIcon('skill')}
             onMouseLeave={() => { setHoveredIcon(null); setMousePosition({ x: 0, y: 0 }); }}
@@ -372,6 +363,7 @@ const Hero = ({ onNavigate }) => { // Accept onNavigate prop
             href="https://drive.google.com/file/d/1npZkuEqBXnw-_xwXDDjsNGIoygxlOw1H/view?usp=sharing" 
             download="Anshumaan_Tiwari_Resume.pdf" 
             target="_blank"
+            rel="noreferrer"
             onMouseEnter={() => setHoveredIcon('resume')}
             onMouseLeave={() => { setHoveredIcon(null); setMousePosition({ x: 0, y: 0 }); }}
             onMouseMove={(e) => handleMouseMove(e, 'resume')}
