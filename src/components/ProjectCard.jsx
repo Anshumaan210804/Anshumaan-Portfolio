@@ -51,7 +51,16 @@ const ProjectCard = ({ imageSrc, title }) => {
     >
       <img src={imageSrc} alt={title} className="w-full h-48 object-cover object-center" />
       <div className="p-4">
-        <h4 className="text-lg font-semibold text-gray-50">{title}</h4>
+     <h4
+  className="text-lg font-semibold text-gray-50"
+  style={{
+    whiteSpace: 'normal',
+    wordBreak: 'break-word',
+    overflowWrap: 'break-word',
+  }}
+>
+  {title}
+</h4>
       </div>
     </div>
   );

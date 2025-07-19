@@ -247,7 +247,7 @@ const Hero = ({ onNavigate }) => { // Accept onNavigate prop
 
 
       {/* Content overlay */}
-      <div className="relative z-10 text-center flex flex-col items-center">
+      <div className=" mt-12 relative  z-10 text-center flex flex-col items-center">
         {/* Main Profile Picture with hover animation */}
         <div
           className={getProfilePicClasses()}
@@ -386,9 +386,9 @@ const Hero = ({ onNavigate }) => { // Accept onNavigate prop
         </div>
      
       </div>
-           <div className="absolute bottom-8 animate-bounce">
+           <div className=" absolute bottom-1 animate-bounce">
             {/* Replaced arrow SVG with mouse scroll icon */}
-            <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className=" w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v14m0 0l-4-4m4 4l4-4M12 2a10 10 0 100 20 10 10 0 000-20zM12 10V5"></path>
             </svg>
         </div>

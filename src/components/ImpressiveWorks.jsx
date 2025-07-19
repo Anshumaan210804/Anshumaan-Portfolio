@@ -11,7 +11,11 @@ import instaScopeImage from '../assets/image-3.png';
 // import chromeExtensionImage from '/image_2f5649.png'; // Updated path to reference from public root
 
 // Reusable component for animating text in paragraphs (copied from About.js for consistency)
-const AnimatedTextParagraph = ({ text, textColorClass = "text-gray-100", glowColor = "#facc15" }) => {
+const AnimatedTextParagraph = ({
+  text,
+  textColorClass = "text-gray-100",
+  glowColor = "#facc15",
+}) => {
   const [hoveredLetterIndex, setHoveredLetterIndex] = useState(null);
   const [letterMousePosition, setLetterMousePosition] = useState({ x: 0, y: 0 });
 
@@ -20,15 +24,14 @@ const AnimatedTextParagraph = ({ text, textColorClass = "text-gray-100", glowCol
       const rotateY = letterMousePosition.x * 15;
       const rotateX = -letterMousePosition.y * 15;
       return {
+        display: 'inline-block',
         transform: `scale(1.1) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`,
         transition: 'transform 0.1s linear',
-        display: 'inline-block',
-        textShadow: `0 0 5px ${glowColor}, 0 0 10px ${glowColor}`
+        textShadow: `0 0 5px ${glowColor}, 0 0 10px ${glowColor}`,
       };
     }
     return {
       transition: 'transform 0.3s ease-out',
-      display: 'inline-block'
     };
   };
 
@@ -43,24 +46,37 @@ const AnimatedTextParagraph = ({ text, textColorClass = "text-gray-100", glowCol
     }
   };
 
+  // ✅ Render each word in a <span> so wrapping is preserved
+  const words = text.split(' ');
+
   return (
-    // Reverted to text-sm, using leading-normal for consistent line height.
-    // Added 'break-words' to prevent long words from overflowing or splitting awkwardly.
-    <p className={`text-sm leading-normal break-words ${textColorClass}`}> 
-      {text.split('').map((char, index) => (
-        <span
-          key={index}
-          style={getLetterStyles(index)}
-          onMouseEnter={() => setHoveredLetterIndex(index)}
-          onMouseLeave={() => { setHoveredLetterIndex(null); setLetterMousePosition({ x: 0, y: 0 }); }}
-          onMouseMove={(e) => handleLetterMouseMove(e, index)}
-        >
-          {char === ' ' ? '\u00A0' : char}
+    <p className={`text-base leading-relaxed ${textColorClass}`} style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>
+      {words.map((word, wordIndex) => (
+        <span key={wordIndex} style={{ display: 'inline' }}>
+          {word.split('').map((char, charIndex) => {
+            const index = wordIndex * 100 + charIndex;
+            return (
+              <span
+                key={index}
+                style={getLetterStyles(index)}
+                onMouseEnter={() => setHoveredLetterIndex(index)}
+                onMouseLeave={() => {
+                  setHoveredLetterIndex(null);
+                  setLetterMousePosition({ x: 0, y: 0 });
+                }}
+                onMouseMove={(e) => handleLetterMouseMove(e, index)}
+              >
+                {char}
+              </span>
+            );
+          })}
+          {' '}
         </span>
       ))}
     </p>
   );
 };
+
 
 // ProjectCard component
 const ProjectCard = ({ imageSrc, title, description, techStack }) => { // Added techStack prop

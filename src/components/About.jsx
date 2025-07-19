@@ -9,7 +9,7 @@ const AnimatedTextParagraph = ({ text, textColorClass = "text-gray-100", glowCol
 
   const getLetterStyles = (index) => {
     if (hoveredLetterIndex === index) {
-      const rotateY = letterMousePosition.x * 15; // Slightly less rotation for paragraphs
+      const rotateY = letterMousePosition.x * 15;
       const rotateX = -letterMousePosition.y * 15;
       return {
         transform: `scale(1.1) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`,
@@ -35,22 +35,37 @@ const AnimatedTextParagraph = ({ text, textColorClass = "text-gray-100", glowCol
     }
   };
 
+  // Split text into words, then characters
+  const words = text.split(' ');
+
   return (
-    <p className={`leading-relaxed mb-4 ${textColorClass}`}>
-      {text.split('').map((char, index) => (
-        <span
-          key={index}
-          style={getLetterStyles(index)}
-          onMouseEnter={() => setHoveredLetterIndex(index)}
-          onMouseLeave={() => { setHoveredLetterIndex(null); setLetterMousePosition({ x: 0, y: 0 }); }}
-          onMouseMove={(e) => handleLetterMouseMove(e, index)}
-        >
-          {char === ' ' ? '\u00A0' : char}
+    <p className={`leading-relaxed mb-4 ${textColorClass} break-words flex flex-wrap gap-x-1`}>
+      {words.map((word, wIndex) => (
+        <span key={`word-${wIndex}`} className="inline-block whitespace-nowrap">
+          {word.split('').map((char, cIndex) => {
+            const index = wIndex * 100 + cIndex; // Safe unique index
+            return (
+              <span
+                key={`char-${wIndex}-${cIndex}`}
+                style={getLetterStyles(index)}
+                onMouseEnter={() => setHoveredLetterIndex(index)}
+                onMouseLeave={() => {
+                  setHoveredLetterIndex(null);
+                  setLetterMousePosition({ x: 0, y: 0 });
+                }}
+                onMouseMove={(e) => handleLetterMouseMove(e, index)}
+              >
+                {char}
+              </span>
+            );
+          })}
+          <span>&nbsp;</span>
         </span>
       ))}
     </p>
   );
 };
+
 
 // Reusable component for animating heading text (e.g., h4)
 const AnimatedHeading = ({ text, sizeClass = "text-2xl", weightClass = "font-bold", textColorClass = "text-gray-50", glowColor = "#facc15" }) => {
@@ -58,35 +73,35 @@ const AnimatedHeading = ({ text, sizeClass = "text-2xl", weightClass = "font-bol
     const [letterMousePosition, setLetterMousePosition] = useState({ x: 0, y: 0 });
 
     const getLetterStyles = (index) => {
-        if (hoveredLetterIndex === index) {
-            const rotateY = letterMousePosition.x * 25; // Slightly more rotation for headings
-            const rotateX = -letterMousePosition.y * 25;
-            return {
-                transform: `scale(1.2) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(15px)`,
-                transition: 'transform 0.1s linear',
-                display: 'inline-block',
-                textShadow: `0 0 8px ${glowColor}, 0 0 15px ${glowColor}`
-            };
-        }
+      if (hoveredLetterIndex === index) {
+        const rotateY = letterMousePosition.x * 25; // Slightly more rotation for headings
+        const rotateX = -letterMousePosition.y * 25;
         return {
-            transition: 'transform 0.3s ease-out',
-            display: 'inline-block'
+          transform: `scale(1.2) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(15px)`,
+          transition: 'transform 0.1s linear',
+          display: 'inline-block',
+          textShadow: `0 0 8px ${glowColor}, 0 0 15px ${glowColor}`
         };
+      }
+      return {
+        transition: 'transform 0.3s ease-out',
+        display: 'inline-block'
+      };
     };
 
     const handleLetterMouseMove = (e, index) => {
-        if (hoveredLetterIndex === index) {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const normalizedX = (x / rect.width) - 0.5;
-            const normalizedY = (y / rect.height) - 0.5;
-            setLetterMousePosition({ x: normalizedX, y: normalizedY });
-        }
+      if (hoveredLetterIndex === index) {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const normalizedX = (x / rect.width) - 0.5;
+        const normalizedY = (y / rect.height) - 0.5;
+        setLetterMousePosition({ x: normalizedX, y: normalizedY });
+      }
     };
 
     return (
-        <h4 className={`${sizeClass} ${weightClass} mb-4 ${textColorClass}`}>
+        <h4 className={`${sizeClass} ${weightClass} mb-4 ${textColorClass} break-words`}> {/* Added break-words */}
             {text.split('').map((char, index) => (
                 <span
                     key={index}
@@ -289,7 +304,7 @@ const About = () => {
             textColorClass="text-gray-100"
             glowColor="#facc15"
           />
-          <p className="text-sm text-gray-400 mt-6">
+          <p className="text-sm text-gray-400 mt-6 break-words"> {/* Added break-words here as well for consistency */}
             {"\"The future of my passion for design lies in creating immersive and intuitive user experiences, leveraging cutting-edge technology in the digital world.\"".split('').map((char, index) => (
               <span
                 key={index}
