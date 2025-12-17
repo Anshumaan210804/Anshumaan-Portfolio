@@ -16,7 +16,7 @@ const Hero = ({ onNavigate }) => {
   const isDesktop = () => window.innerWidth >= 768;
 
   const [hoveredIcon, setHoveredIcon] = useState(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mousePosition] = useState({ x: 0, y: 0 });
 
   const [isProfilePicHovered, setIsProfilePicHovered] = useState(false);
   const [profilePicMousePosition, setProfilePicMousePosition] = useState({ x: 0, y: 0 });
