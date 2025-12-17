@@ -7,6 +7,7 @@ import ImpressiveWorks from './components/ImpressiveWorks';
 import CallToAction from './components/CallToAction';
 import Footer from './components/Footer';
 import Skills from './components/Skills'; // Import the Skills component
+import "./styles/responsive.css";
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('home'); // State to track the current "page"
