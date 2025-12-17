@@ -9,6 +9,14 @@ import leet from '../assets/rectangle-2.png';
 import gfg from '../assets/rectangle-3-2.svg';
 import lin from '../assets/rectangle-3.svg';
 import sk from '../assets/rectangle-1.svg';
+const socialLinks = [
+  { icon: leet, href: 'https://leetcode.com/u/anshumaan_tiwari_/' },
+  { icon: lin, href: 'https://www.linkedin.com/in/anshumaan-tiwari-16b9a4284/' },
+  { icon: gfg, href: 'https://www.geeksforgeeks.org/user/tiwanshu02k6/' },
+  { icon: skills, href: 'https://www.instagram.com/anshumaan_tiwari_/' },
+  { icon: git, href: 'https://github.com/Anshumaan210804' },
+  { icon: sk, action: 'skills' }, // internal navigation
+];
 
 const Hero = ({ onNavigate }) => {
   const canvasRef = useRef(null);
@@ -171,20 +179,47 @@ const Hero = ({ onNavigate }) => {
 
 
         {/* Social Icons */}
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
-          {[leet, lin, gfg, skills, git, sk].map((icon, i) => (
-            <button
-              key={i}
-              onClick={() => i === 5 && onNavigate('skills')}
-              onMouseEnter={() => isDesktop() && setHoveredIcon(i)}
-              onMouseLeave={() => setHoveredIcon(null)}
-              className="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-gray-600 bg-gray-700 overflow-hidden transition-transform"
-              style={getButtonStyles(i)}
-            >
-              <img src={icon} alt="" className="w-full h-full object-cover" />
-            </button>
-          ))}
-        </div>
+        {/* Social Icons */}
+<div className="mt-8 flex flex-wrap justify-center gap-4">
+  {socialLinks.map((item, i) => {
+    const commonClasses =
+      'w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-gray-600 bg-gray-700 overflow-hidden transition-transform';
+
+    const commonProps = {
+      onMouseEnter: () => isDesktop() && setHoveredIcon(i),
+      onMouseLeave: () => setHoveredIcon(null),
+      style: getButtonStyles(i),
+      className: commonClasses,
+    };
+
+    // Internal navigation (Skills)
+    if (item.action === 'skills') {
+      return (
+        <button
+          key={i}
+          {...commonProps}
+          onClick={() => onNavigate('skills')}
+        >
+          <img src={item.icon} alt="Skills" className="w-full h-full object-cover" />
+        </button>
+      );
+    }
+
+    // External links
+    return (
+      <a
+        key={i}
+        href={item.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        {...commonProps}
+      >
+        <img src={item.icon} alt="" className="w-full h-full object-cover" />
+      </a>
+    );
+  })}
+</div>
+
 
         {/* Scroll indicator */}
         <div className="mt-10 animate-bounce text-purple-400">
