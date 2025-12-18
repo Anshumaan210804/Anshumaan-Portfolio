@@ -1,42 +1,78 @@
 // src/App.js
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
 import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
 import ImpressiveWorks from './components/ImpressiveWorks';
 import CallToAction from './components/CallToAction';
 import Footer from './components/Footer';
-import Skills from './components/Skills'; // Import the Skills component
+import Skills from './components/Skills';
+
 import "./styles/responsive.css";
 
-const App = () => {
-  const [currentPage, setCurrentPage] = useState('home'); // State to track the current "page"
+const pageVariants = {
+  initial: {
+    opacity: 0,
+    y: 30,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: 'easeOut',
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -30,
+    transition: {
+      duration: 0.4,
+      ease: 'easeIn',
+    },
+  },
+};
 
-  // Function to change the current "page"
+const App = () => {
+  const [currentPage, setCurrentPage] = useState('home');
+
   const navigateTo = (page) => {
     setCurrentPage(page);
-    // Optionally scroll to top when changing 'pages' if desired
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div className="min-h-screen bg-gray-950 font-inter text-gray-50">
-      {/* Conditional rendering for Header and main content */}
-      {currentPage === 'skills' ? (
-        // Render the Skills component when currentPage is 'skills'
-        <Skills id="skills-section" onNavigate={navigateTo} /> 
-      ) : (
-        // Render Header and main portfolio sections when currentPage is 'home'
-        <>
-          <Header onNavigate={navigateTo} /> {/* Header is now conditionally rendered */}
-          <Hero id="home-section" onNavigate={navigateTo} />
-          <About id="about-section" />
-          <ImpressiveWorks id="works-section" />
-          <CallToAction id="contact-section" />
-        </>
-      )}
-      
-      {/* Footer component, always visible (can be made conditional if needed) */}
+      <AnimatePresence mode="wait">
+        {currentPage === 'skills' ? (
+          <motion.div
+            key="skills"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <Skills id="skills-section" onNavigate={navigateTo} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="home"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <Header onNavigate={navigateTo} />
+            <Hero id="home-section" onNavigate={navigateTo} />
+            <About id="about-section" />
+            <ImpressiveWorks id="works-section" />
+            <CallToAction id="contact-section" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Footer id="footer-section" />
     </div>
   );

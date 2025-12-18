@@ -1,38 +1,38 @@
 // src/components/Hero.jsx
-import React, { useEffect, useRef, useState } from 'react';
-import * as THREE from 'three';
+import React, { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
 
-import profileBannerImage from '../anshumaan-banner.png';
-import skills from '../assets/image-1.svg';
-import git from '../assets/github.svg';
-import leet from '../assets/rectangle-2.png';
-import gfg from '../assets/rectangle-3-2.svg';
-import lin from '../assets/rectangle-3.svg';
-import sk from '../assets/rectangle-1.svg';
+import profileBannerImage from "../anshumaan-banner.png";
+import skills from "../assets/image-1.svg";
+import git from "../assets/github.svg";
+import leet from "../assets/rectangle-2.png";
+import gfg from "../assets/rectangle-3-2.svg";
+import lin from "../assets/rectangle-3.svg";
+import sk from "../assets/rectangle-1.svg";
+
 const socialLinks = [
-  { icon: leet, href: 'https://leetcode.com/u/anshumaan_tiwari_/' },
-  { icon: lin, href: 'https://www.linkedin.com/in/anshumaan-tiwari-16b9a4284/' },
-  { icon: gfg, href: 'https://www.geeksforgeeks.org/user/tiwanshu02k6/' },
-  { icon: skills, href: 'https://www.instagram.com/anshumaan_tiwari_/' },
-  { icon: git, href: 'https://github.com/Anshumaan210804' },
-  { icon: sk, action: 'skills' }, // internal navigation
+  { icon: leet, href: "https://leetcode.com/u/anshumaan_tiwari_/" },
+  { icon: lin, href: "https://www.linkedin.com/in/anshumaan-tiwari-16b9a4284/" },
+  { icon: gfg, href: "https://www.geeksforgeeks.org/user/tiwanshu02k6/" },
+  { icon: skills, href: "https://www.instagram.com/anshumaan_tiwari_/" },
+  { icon: git, href: "https://github.com/Anshumaan210804" },
+  { icon: sk, action: "skills" },
 ];
 
 const Hero = ({ onNavigate }) => {
   const canvasRef = useRef(null);
-
   const isDesktop = () => window.innerWidth >= 768;
 
   const [hoveredIcon, setHoveredIcon] = useState(null);
-  const [mousePosition] = useState({ x: 0, y: 0 });
+  const [iconMousePosition, setIconMousePosition] = useState({ x: 0, y: 0 });
 
-  const [isProfilePicHovered, setIsProfilePicHovered] = useState(false);
-  const [profilePicMousePosition, setProfilePicMousePosition] = useState({ x: 0, y: 0 });
+  const [isProfileHovered, setIsProfileHovered] = useState(false);
+  const [profileMousePosition, setProfileMousePosition] = useState({ x: 0, y: 0 });
 
   const [hoveredLetterIndex, setHoveredLetterIndex] = useState(null);
   const [letterMousePosition, setLetterMousePosition] = useState({ x: 0, y: 0 });
 
-  /* ================= THREE.JS (DESKTOP ONLY) ================= */
+  /* ================= THREE.JS BACKGROUND ================= */
   useEffect(() => {
     if (!isDesktop()) return;
 
@@ -45,187 +45,188 @@ const Hero = ({ onNavigate }) => {
     renderer.setPixelRatio(window.devicePixelRatio);
     canvas.appendChild(renderer.domElement);
 
-    const starGeometry = new THREE.BufferGeometry();
-    const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.7 });
-    const starVertices = [];
+    const geometry = new THREE.BufferGeometry();
+    const material = new THREE.PointsMaterial({ color: 0xffffff, size: 0.7 });
+    const vertices = [];
 
     for (let i = 0; i < 6000; i++) {
-      starVertices.push(
+      vertices.push(
         (Math.random() - 0.5) * 2000,
         (Math.random() - 0.5) * 2000,
         (Math.random() - 0.5) * 2000
       );
     }
 
-    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-    const stars = new THREE.Points(starGeometry, starMaterial);
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
+    const stars = new THREE.Points(geometry, material);
     scene.add(stars);
     camera.position.z = 5;
 
     const animate = () => {
-      stars.rotation.x += 0.0004;
-      stars.rotation.y += 0.0004;
+      stars.rotation.x += 0.00025;
+      stars.rotation.y += 0.00025;
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     };
     animate();
 
-    const onResize = () => {
-      camera.aspect = window.innerWidth / 600;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, 600);
-    };
-
-    window.addEventListener('resize', onResize);
-
     return () => {
-      window.removeEventListener('resize', onResize);
       canvas.removeChild(renderer.domElement);
-      starGeometry.dispose();
-      starMaterial.dispose();
+      geometry.dispose();
+      material.dispose();
       renderer.dispose();
     };
   }, []);
 
-  /* ================= HELPERS ================= */
-  const getProfilePicStyles = () =>
-    isProfilePicHovered && isDesktop()
-      ? {
-          transform: `scale(1.1) rotateX(${-profilePicMousePosition.y * 20}deg) rotateY(${profilePicMousePosition.x * 20}deg)`,
-        }
-      : {};
+  /* ================= PROFILE ANIMATION (MATCH SKILLS ICON FEEL) ================= */
+  const getProfileStyles = () => {
+    if (isProfileHovered && isDesktop()) {
+      const rotateY = profileMousePosition.x * 15;
+      const rotateX = -profileMousePosition.y * 15;
+      return {
+        transform: `scale(1.12) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`,
+        transition: "transform 0.1s linear",
+        boxShadow: "0 0 20px #a78bfa, 0 0 40px #a78bfa",
+      };
+    }
+    return {
+      transition: "transform 0.3s ease-out, box-shadow 0.3s ease-out",
+    };
+  };
 
-  const getButtonStyles = (icon) =>
-    hoveredIcon === icon && isDesktop()
-      ? {
-          transform: `scale(2) rotateX(${-mousePosition.y * 30}deg) rotateY(${mousePosition.x * 30}deg)`,
-        }
-      : {};
+  /* ================= LETTER ANIMATION (MATCH SKILLS) ================= */
+  const getLetterStyles = (index) => {
+    if (hoveredLetterIndex === index && isDesktop()) {
+      const rotateY = letterMousePosition.x * 15;
+      const rotateX = -letterMousePosition.y * 15;
+      return {
+        transform: `scale(1.2) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`,
+        transition: "transform 0.1s linear",
+        display: "inline-block",
+        textShadow: "0 0 8px #facc15, 0 0 15px #facc15",
+      };
+    }
+    return {
+      transition: "transform 0.3s ease-out",
+      display: "inline-block",
+    };
+  };
 
-  const getLetterStyles = (i) =>
-    hoveredLetterIndex === i && isDesktop()
-      ? {
-          transform: `scale(1.4) rotateY(${letterMousePosition.x * 25}deg)`,
-          textShadow: '0 0 12px #facc15',
-          display: 'inline-block',
-        }
-      : { display: 'inline-block' };
+  /* ================= ICON ANIMATION (MATCH SKILLS ICONS) ================= */
+  const getIconStyles = (index) => {
+    if (hoveredIcon === index && isDesktop()) {
+      const rotateY = iconMousePosition.x * 20;
+      const rotateX = -iconMousePosition.y * 20;
+      return {
+        transform: `scale(1.3) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(15px)`,
+        transition: "transform 0.1s linear",
+        boxShadow: "0 0 12px #a78bfa, 0 0 25px #a78bfa",
+        backgroundColor: "#6d28d9",
+      };
+    }
+    return {
+      transition: "transform 0.3s ease-out, box-shadow 0.3s ease-out",
+      backgroundColor: "#374151",
+    };
+  };
 
-  const headingText = 'CREATIVE & PASSIONATE DEVELOPER';
+  const headingText = "CREATIVE & PASSIONATE DEVELOPER";
 
   /* ================= JSX ================= */
   return (
-    <section
-      id="home-section"
-      className="relative min-h-screen flex items-center justify-center text-white bg-gray-950 overflow-hidden pt-24"
-    >
-      {/* Stars (desktop only) */}
+    <section className="relative min-h-screen flex items-center justify-center bg-gray-950 text-white overflow-hidden pt-24">
       <div ref={canvasRef} className="absolute inset-0 z-0 hidden md:block" />
       <div className="absolute inset-0 bg-black/60 z-0" />
 
-      {/* Content */}
       <div className="relative z-10 flex flex-col items-center text-center px-4">
-        {/* Profile */}
+        {/* PROFILE */}
         <div
-          className="w-28 h-28 md:w-40 md:h-40 rounded-full border-4 border-gray-600 overflow-hidden transition-all duration-300"
-          style={getProfilePicStyles()}
-          onMouseEnter={() => isDesktop() && setIsProfilePicHovered(true)}
-          onMouseLeave={() => setIsProfilePicHovered(false)}
+          className="w-28 h-28 md:w-40 md:h-40 rounded-full border-4 border-purple-500 overflow-hidden mb-6"
+          style={getProfileStyles()}
+          onMouseEnter={() => setIsProfileHovered(true)}
+          onMouseLeave={() => {
+            setIsProfileHovered(false);
+            setProfileMousePosition({ x: 0, y: 0 });
+          }}
           onMouseMove={(e) => {
-            if (!isDesktop()) return;
             const r = e.currentTarget.getBoundingClientRect();
-            setProfilePicMousePosition({
-              x: e.clientX / r.width - 0.5,
-              y: e.clientY / r.height - 0.5,
+            setProfileMousePosition({
+              x: (e.clientX - r.left) / r.width - 0.5,
+              y: (e.clientY - r.top) / r.height - 0.5,
             });
           }}
         >
           <img src={profileBannerImage} alt="Profile" className="w-full h-full object-cover" />
         </div>
-{/* Heading */}
-<h2 className="mt-6 text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-wide leading-tight text-center">
-  {headingText.split(' ').map((word, wIndex) => (
-    <span
-      key={wIndex}
-      className={`inline-block whitespace-nowrap ${
-        word === 'DEVELOPER' ? 'block mt-1' : 'mr-2'
-      }`}
-    >
-      {word.split('').map((c, i) => {
-        const index = wIndex * 100 + i; // unique index
-        return (
-          <span
-            key={index}
-            style={getLetterStyles(index)}
-            onMouseEnter={() => isDesktop() && setHoveredLetterIndex(index)}
-            onMouseLeave={() => setHoveredLetterIndex(null)}
-            onMouseMove={(e) => {
-              if (!isDesktop()) return;
-              const r = e.currentTarget.getBoundingClientRect();
-              setLetterMousePosition({
-                x: e.clientX / r.width - 0.5,
-                y: e.clientY / r.height - 0.5,
-              });
-            }}
-            className="inline-block"
-          >
-            {c}
-          </span>
-        );
-      })}
-    </span>
-  ))}
-</h2>
 
+        {/* HEADING */}
+        <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-wide">
+          {headingText.split(" ").map((word, wIndex) => (
+            <span key={wIndex} className={word === "DEVELOPER" ? "block mt-1" : "mr-2"}>
+              {word.split("").map((char, i) => {
+                const index = wIndex * 100 + i;
+                return (
+                  <span
+                    key={index}
+                    style={getLetterStyles(index)}
+                    onMouseEnter={() => setHoveredLetterIndex(index)}
+                    onMouseLeave={() => {
+                      setHoveredLetterIndex(null);
+                      setLetterMousePosition({ x: 0, y: 0 });
+                    }}
+                    onMouseMove={(e) => {
+                      const r = e.currentTarget.getBoundingClientRect();
+                      setLetterMousePosition({
+                        x: (e.clientX - r.left) / r.width - 0.5,
+                        y: (e.clientY - r.top) / r.height - 0.5,
+                      });
+                    }}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+            </span>
+          ))}
+        </h2>
 
-        {/* Social Icons */}
-        {/* Social Icons */}
-<div className="mt-8 flex flex-wrap justify-center gap-4">
-  {socialLinks.map((item, i) => {
-    const commonClasses =
-      'w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-gray-600 bg-gray-700 overflow-hidden transition-transform';
+        {/* SOCIAL ICONS */}
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
+          {socialLinks.map((item, i) => {
+            const commonProps = {
+              style: getIconStyles(i),
+              onMouseEnter: () => setHoveredIcon(i),
+              onMouseLeave: () => {
+                setHoveredIcon(null);
+                setIconMousePosition({ x: 0, y: 0 });
+              },
+              onMouseMove: (e) => {
+                const r = e.currentTarget.getBoundingClientRect();
+                setIconMousePosition({
+                  x: (e.clientX - r.left) / r.width - 0.5,
+                  y: (e.clientY - r.top) / r.height - 0.5,
+                });
+              },
+              className:
+                "w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-purple-500 flex items-center justify-center",
+            };
 
-    const commonProps = {
-      onMouseEnter: () => isDesktop() && setHoveredIcon(i),
-      onMouseLeave: () => setHoveredIcon(null),
-      style: getButtonStyles(i),
-      className: commonClasses,
-    };
-
-    // Internal navigation (Skills)
-    if (item.action === 'skills') {
-      return (
-        <button
-          key={i}
-          {...commonProps}
-          onClick={() => onNavigate('skills')}
-        >
-          <img src={item.icon} alt="Skills" className="w-full h-full object-cover" />
-        </button>
-      );
-    }
-
-    // External links
-    return (
-      <a
-        key={i}
-        href={item.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        {...commonProps}
-      >
-        <img src={item.icon} alt="" className="w-full h-full object-cover" />
-      </a>
-    );
-  })}
-</div>
-
-
-        {/* Scroll indicator */}
-        <div className="mt-10 animate-bounce text-purple-400">
-          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v14m0 0l-4-4m4 4l4-4" />
-          </svg>
+            return item.action ? (
+              <button key={i} {...commonProps} onClick={() => onNavigate("skills")}>
+                <img src={item.icon} alt="Skills" className="w-full h-full object-cover" />
+              </button>
+            ) : (
+              <a
+                key={i}
+                {...commonProps}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src={item.icon} alt="" className="w-full h-full object-cover" />
+              </a>
+            );
+          })}
         </div>
       </div>
     </section>

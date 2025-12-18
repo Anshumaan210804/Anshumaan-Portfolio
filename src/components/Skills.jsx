@@ -12,6 +12,7 @@ const SkillIcon = ({ icon, label }) => {
   const [isIconHovered, setIsIconHovered] = useState(false);
   const [iconMousePosition, setIconMousePosition] = useState({ x: 0, y: 0 });
 
+
   const getLabelLetterStyles = (index) => {
     if (hoveredLabelLetterIndex === index) {
       const rotateY = labelLetterMousePosition.x * 15;
@@ -435,21 +436,32 @@ const Skills = ({ onNavigate }) => {
   }, []);
 
   const getMainTitleLetterStyles = (index) => {
-    if (hoveredMainTitleLetterIndex === index) {
-      const rotateY = mainTitleLetterMousePosition.x * 30;
-      const rotateX = -mainTitleLetterMousePosition.y * 30;
-      return {
-        transform: `scale(1.5) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`,
-        transition: "transform 0.1s linear",
-        display: "inline-block",
-        textShadow: "0 0 10px #facc15, 0 0 20px #facc15",
-      };
-    }
+  const isDesktop = window.innerWidth >= 768;
+
+  if (hoveredMainTitleLetterIndex === index) {
+    const rotateMultiplier = isDesktop ? 30 : 12;
+    const scaleValue = isDesktop ? 1.5 : 1.15;
+    const depth = isDesktop ? 20 : 8;
+
+    const rotateY = mainTitleLetterMousePosition.x * rotateMultiplier;
+    const rotateX = -mainTitleLetterMousePosition.y * rotateMultiplier;
+
     return {
-      transition: "transform 0.3s ease-out",
+      transform: `scale(${scaleValue}) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(${depth}px)`,
+      transition: "transform 0.1s linear",
       display: "inline-block",
+      textShadow: isDesktop
+        ? "0 0 10px #facc15, 0 0 20px #facc15"
+        : "0 0 6px #facc15",
     };
+  }
+
+  return {
+    transition: "transform 0.3s ease-out",
+    display: "inline-block",
   };
+};
+
 
   const handleMainTitleLetterMouseMove = (e, index) => {
     if (hoveredMainTitleLetterIndex === index) {
@@ -465,7 +477,7 @@ const Skills = ({ onNavigate }) => {
   // Define your skill categories and individual skills with icons
   const skillCategories = [
     {
-      title: "Full Stack Web Development (MERN Stack)",
+      title: "Full Stack Web Development",
       description:
         "Proficient in building end-to-end web applications with a focus on modern technologies like React.js, Node.js, and MongoDB.",
       skills: [
@@ -704,7 +716,8 @@ const Skills = ({ onNavigate }) => {
       <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto text-center w-full">
-        <h2 className="text-4xl md:text-5xl font-extrabold tracking-wide drop-shadow-lg mb-12">
+       <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-wide drop-shadow-lg mb-12">
+
           {"Skills that fuel my passion".split("").map((char, index) => (
             <span
               key={index}
@@ -733,7 +746,8 @@ const Skills = ({ onNavigate }) => {
         </div>
 
         {/* New section for skill levels with progress bars and stars */}
-        <h2 className="text-4xl md:text-5xl font-extrabold tracking-wide drop-shadow-lg mb-12 mt-16">
+       <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-wide drop-shadow-lg mb-12">
+
           {"My Proficiency Levels".split("").map((char, index) => (
             <span
               key={index}
